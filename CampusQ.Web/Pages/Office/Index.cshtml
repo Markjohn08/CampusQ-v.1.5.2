@@ -1,0 +1,94 @@
+@page "{service}"
+@model CampusQ.Web.Pages.Office.IndexModel
+@{
+	ViewData["Title"] = $"{Model.Queue.Service} Queue";
+}
+
+<div class="container mt-4" id="office-queue" data-service="@Model.Queue.Service" data-refresh-seconds="@Model.RefreshIntervalSeconds">
+	<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+		<h1 class="mb-0">@Model.Queue.Service <span class="text-muted fs-5">Queue</span></h1>
+
+		<div class="btn-group" role="group" aria-label="Switch office">
+			@foreach (var office in Model.KnownOffices)
+			{
+				var active = string.Equals(office, Model.Queue.Service, StringComparison.OrdinalIgnoreCase);
+				<a class="btn @(active ? "btn-primary" : "btn-outline-primary")" asp-page="/Office/Index" asp-route-service="@office">@office</a>
+			}
+		</div>
+	</div>
+
+	@if (!Model.Queue.ServiceRecognized)
+	{
+		<div class="alert alert-warning">
+			"@Model.Queue.Service" is not a recognized office. Showing results anyway, but double-check the QR code / URL.
+		</div>
+	}
+
+	<div class="card shadow-sm">
+		<div class="card-header d-flex justify-content-between align-items-center">
+			<span>Currently waiting</span>
+			<span class="badge bg-success" id="total-waiting">@Model.Queue.TotalWaiting</span>
+		</div>
+		<ul class="list-group list-group-flush" id="queue-list">
+			@if (Model.Queue.Tickets.Count == 0)
+			{
+				<li class="list-group-item text-center text-muted py-4" id="empty-row">No one is currently waiting for @Model.Queue.Service.</li>
+			}
+			else
+			{
+				foreach (var ticket in Model.Queue.Tickets)
+				{
+					<li class="list-group-item d-flex justify-content-between align-items-center">
+						<div>
+							<span class="fw-bold">@ticket.TicketLabel</span>
+							<span class="text-muted ms-2">@ticket.Purpose</span>
+						</div>
+						<span class="badge bg-secondary rounded-pill">#@ticket.Position in line</span>
+					</li>
+				}
+			}
+		</ul>
+	</div>
+
+	<p class="text-muted mt-3 small">This page refreshes automatically every @Model.RefreshIntervalSeconds seconds.</p>
+</div>
+
+@section Scripts {
+	<script>
+		(function () {
+			var container = document.getElementById('office-queue');
+			if (!container) return;
+			var service = container.getAttribute('data-service');
+			var refreshSeconds = parseInt(container.getAttribute('data-refresh-seconds'), 10) || 10;
+
+			function renderTickets(tickets) {
+				var list = document.getElementById('queue-list');
+				var totalWaiting = document.getElementById('total-waiting');
+				totalWaiting.textContent = tickets.length;
+
+				if (tickets.length === 0) {
+					list.innerHTML = '<li class="list-group-item text-center text-muted py-4" id="empty-row">No one is currently waiting for ' + service + '.</li>';
+					return;
+				}
+
+				var html = '';
+				tickets.forEach(function (t) {
+					html += '<li class="list-group-item d-flex justify-content-between align-items-center">'
+						+ '<div><span class="fw-bold">' + t.ticketLabel + '</span>'
+						+ '<span class="text-muted ms-2">' + (t.purpose || '') + '</span></div>'
+						+ '<span class="badge bg-secondary rounded-pill">#' + t.position + ' in line</span></li>';
+				});
+				list.innerHTML = html;
+			}
+
+			function refreshQueue() {
+				fetch('/api/office/' + encodeURIComponent(service) + '/queue')
+					.then(function (resp) { return resp.json(); })
+					.then(function (data) { renderTickets(data.tickets || []); })
+					.catch(function () { /* ignore transient network errors */ });
+			}
+
+			setInterval(refreshQueue, refreshSeconds * 1000);
+		})();
+	</script>
+}

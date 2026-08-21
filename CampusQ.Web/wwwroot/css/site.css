@@ -1,0 +1,132 @@
+:root {
+  --cq-light-green: #8bc34a;
+  --cq-dark-green: #1b5e20;
+  --cq-mid-green: #2e7d32;
+  --cq-white: #ffffff;
+}
+
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--cq-mid-green);
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+  background-color: var(--cq-white);
+  color: #1c1c1c;
+}
+
+/* ===== CampusQ color scheme: light green / dark green / white ===== */
+
+a {
+  color: var(--cq-dark-green);
+}
+
+a:hover {
+  color: var(--cq-mid-green);
+}
+
+.navbar {
+  background-color: var(--cq-dark-green) !important;
+}
+
+.navbar .navbar-brand,
+.navbar .nav-link {
+  color: var(--cq-white) !important;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+  color: var(--cq-light-green) !important;
+}
+
+.navbar-toggler {
+  border-color: var(--cq-light-green);
+}
+
+.navbar-toggler-icon {
+  filter: invert(1);
+}
+
+.btn-primary {
+  color: var(--cq-white);
+  background-color: var(--cq-mid-green);
+  border-color: var(--cq-dark-green);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--cq-dark-green);
+  border-color: var(--cq-dark-green);
+}
+
+.btn-outline-primary {
+  color: var(--cq-dark-green);
+  border-color: var(--cq-dark-green);
+}
+
+.btn-outline-primary:hover {
+  color: var(--cq-white);
+  background-color: var(--cq-dark-green);
+  border-color: var(--cq-dark-green);
+}
+
+.text-primary {
+  color: var(--cq-dark-green) !important;
+}
+
+.text-success {
+  color: var(--cq-mid-green) !important;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  color: var(--cq-white);
+  background-color: var(--cq-mid-green);
+  border-color: var(--cq-dark-green);
+}
+
+.card {
+  border-color: var(--cq-light-green);
+}
+
+.card-header {
+  background-color: var(--cq-light-green);
+  color: #1c1c1c;
+  border-bottom-color: var(--cq-dark-green);
+}
+
+.alert-info {
+  background-color: #eef8e6;
+  border-color: var(--cq-light-green);
+  color: var(--cq-dark-green);
+}
+
+footer.footer {
+  background-color: var(--cq-dark-green);
+  color: var(--cq-white);
+}
+
+footer.footer a {
+  color: var(--cq-light-green);
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}

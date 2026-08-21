@@ -1,0 +1,85 @@
+@page
+@using System.Drawing
+@using QRCoder
+@model QRCodeModel
+@{
+	ViewData["Title"] = "QR Code";
+}
+
+<div class="container mt-5">
+	<div class="row justify-content-center">
+		<div class="col-md-6">
+			<h1 class="text-center mb-4">CampusQ - Share via QR Code</h1>
+
+			<div class="card mb-3">
+				<div class="card-body">
+					<label for="office-select" class="form-label fw-bold">Office</label>
+					<div class="d-flex gap-2 flex-wrap" id="office-select">
+						<a class="btn @(string.IsNullOrEmpty(Model.Office) ? "btn-primary" : "btn-outline-primary")" asp-page="/QRCode">General link</a>
+						@foreach (var office in Model.KnownOffices)
+						{
+							var active = string.Equals(office, Model.Office, StringComparison.OrdinalIgnoreCase);
+							<a class="btn @(active ? "btn-primary" : "btn-outline-primary")" asp-page="/QRCode" asp-route-office="@office">@office</a>
+						}
+					</div>
+				</div>
+			</div>
+
+			<div class="card">
+				<div class="card-body text-center p-4">
+					@if (!string.IsNullOrEmpty(Model.QrCodeImageUrl))
+					{
+						<img src="@Model.QrCodeImageUrl" alt="QR Code" class="img-fluid" style="max-width: 400px; border: 2px solid #ddd; padding: 10px;" />
+
+						<hr />
+
+						<h5 class="mt-3">Share this URL:</h5>
+						<p class="text-primary font-monospace">
+							<strong>@Model.ShareUrl</strong>
+						</p>
+
+						<button class="btn btn-primary" onclick="copyToClipboard('@Model.ShareUrl')">
+							📋 Copy URL to Clipboard
+						</button>
+
+						<hr />
+
+						<div class="alert alert-info">
+							<strong>📱 Instructions:</strong>
+							<ul style="text-align: left;">
+								<li>Scan the QR code with any mobile device</li>
+								<li>Or manually visit: <code>@Model.ShareUrl</code></li>
+								<li>The device must be on the same network (192.168.1.x)</li>
+							</ul>
+						</div>
+					}
+					else
+					{
+						<div class="alert alert-warning">
+							Unable to generate QR code. Please ensure QRCoder is installed.
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	function copyToClipboard(text) {
+		navigator.clipboard.writeText(text).then(() => {
+			alert('URL copied to clipboard!');
+		}).catch(() => {
+			alert('Failed to copy URL');
+		});
+	}
+</script>
+
+<style>
+	.font-monospace {
+		font-family: 'Courier New', monospace;
+		background-color: #f5f5f5;
+		padding: 10px;
+		border-radius: 4px;
+	}
+</style>
